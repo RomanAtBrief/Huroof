@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arabic Letters Learning</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: rgb(250, 249, 245);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #333;
+        }
+
+        .app-container {
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .card-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .nav-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.9);
+            color: rgb(217, 119, 87);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            font-size: 1.2rem;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+            background: white;
+        }
+
+        .nav-btn:active {
+            transform: translateY(0);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .card-container {
+            perspective: 1000px;
+            width: 300px;
+            height: 400px;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 40px 20px;
+            border: 1px solid rgb(230, 229, 226);
+        }
+
+        .card-front {
+            background: rgb(255, 255, 255);
+        }
+
+        .card-back {
+            background: rgb(240, 238, 230);
+            color: #333;
+            transform: rotateY(180deg);
+        }
+
+        .arabic-letter {
+            font-family: 'Amiri', serif;
+            font-size: 6rem;
+            font-weight: 700;
+            color: rgb(217, 119, 87);
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            direction: rtl;
+            line-height: 1;
+        }
+
+        .card-hint {
+            font-size: 0.9rem;
+            color: #666;
+            opacity: 0.7;
+            animation: pulse 2s infinite;
+        }
+
+        .letter-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .letter-position {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.3);
+            padding: 8px 16px;
+            border-radius: 15px;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .card-container {
+                width: 280px;
+                height: 360px;
+            }
+            
+            .arabic-letter {
+                font-size: 5rem;
+            }
+            
+            .letter-name {
+                font-size: 2rem;
+            }
+            
+            .nav-btn {
+                width: 45px;
+                height: 45px;
+            }
+            
+            .card-section {
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            .card-container {
+                width: 260px;
+                height: 340px;
+            }
+            
+            .arabic-letter {
+                font-size: 4.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Card Area -->
+        <div class="card-section">
+            <!-- Previous Button -->
+            <button id="prev-btn" class="nav-btn" title="Previous card">
+                ‹
+            </button>
+
+            <!-- Card Container -->
+            <div class="card-container">
+                <div id="card" class="card">
+                    <!-- Front of Card -->
+                    <div class="card-face card-front">
+                        <div id="arabic-letter" class="arabic-letter">ا</div>
+                        <div class="card-hint">Tap to reveal</div>
+                    </div>
+                    
+                    <!-- Back of Card -->
+                    <div class="card-face card-back">
+                        <div id="letter-name" class="letter-name">Alif</div>
+                        <div id="letter-position" class="letter-position">Isolated</div>
+                        <div class="card-hint">Tap to flip back</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Button -->
+            <button id="next-btn" class="nav-btn" title="Next card">
+                ›
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Arabic letters data with all positional forms
+        const arabicLetters = [
+            // Alif
+            { letter: 'ا', name: 'Alif', position: 'Isolated' },
+            { letter: 'ا', name: 'Alif', position: 'Beginning' },
+            { letter: 'ـا', name: 'Alif', position: 'End' },
+            
+            // Ba
+            { letter: 'ب', name: 'Ba', position: 'Isolated' },
+            { letter: 'بـ', name: 'Ba', position: 'Beginning' },
+            { letter: 'ـبـ', name: 'Ba', position: 'Middle' },
+            { letter: 'ـب', name: 'Ba', position: 'End' },
+            
+            // Ta
+            { letter: 'ت', name: 'Ta', position: 'Isolated' },
+            { letter: 'تـ', name: 'Ta', position: 'Beginning' },
+            { letter: 'ـتـ', name: 'Ta', position: 'Middle' },
+            { letter: 'ـت', name: 'Ta', position: 'End' },
+            
+            // Tha
+            { letter: 'ث', name: 'Tha', position: 'Isolated' },
+            { letter: 'ثـ', name: 'Tha', position: 'Beginning' },
+            { letter: 'ـثـ', name: 'Tha', position: 'Middle' },
+            { letter: 'ـث', name: 'Tha', position: 'End' },
+            
+            // Jim
+            { letter: 'ج', name: 'Jim', position: 'Isolated' },
+            { letter: 'جـ', name: 'Jim', position: 'Beginning' },
+            { letter: 'ـجـ', name: 'Jim', position: 'Middle' },
+            { letter: 'ـج', name: 'Jim', position: 'End' },
+            
+            // Ha
+            { letter: 'ح', name: 'Ha', position: 'Isolated' },
+            { letter: 'حـ', name: 'Ha', position: 'Beginning' },
+            { letter: 'ـحـ', name: 'Ha', position: 'Middle' },
+            { letter: 'ـح', name: 'Ha', position: 'End' },
+            
+            // Kha
+            { letter: 'خ', name: 'Kha', position: 'Isolated' },
+            { letter: 'خـ', name: 'Kha', position: 'Beginning' },
+            { letter: 'ـخـ', name: 'Kha', position: 'Middle' },
+            { letter: 'ـخ', name: 'Kha', position: 'End' },
+            
+            // Dal
+            { letter: 'د', name: 'Dal', position: 'Isolated' },
+            { letter: 'د', name: 'Dal', position: 'Beginning' },
+            { letter: 'ـد', name: 'Dal', position: 'End' },
+            
+            // Dhal
+            { letter: 'ذ', name: 'Dhal', position: 'Isolated' },
+            { letter: 'ذ', name: 'Dhal', position: 'Beginning' },
+            { letter: 'ـذ', name: 'Dhal', position: 'End' },
+            
+            // Ra
+            { letter: 'ر', name: 'Ra', position: 'Isolated' },
+            { letter: 'ر', name: 'Ra', position: 'Beginning' },
+            { letter: 'ـر', name: 'Ra', position: 'End' },
+            
+            // Zay
+            { letter: 'ز', name: 'Zay', position: 'Isolated' },
+            { letter: 'ز', name: 'Zay', position: 'Beginning' },
+            { letter: 'ـز', name: 'Zay', position: 'End' },
+            
+            // Sin
+            { letter: 'س', name: 'Sin', position: 'Isolated' },
+            { letter: 'سـ', name: 'Sin', position: 'Beginning' },
+            { letter: 'ـسـ', name: 'Sin', position: 'Middle' },
+            { letter: 'ـس', name: 'Sin', position: 'End' },
+            
+            // Shin
+            { letter: 'ش', name: 'Shin', position: 'Isolated' },
+            { letter: 'شـ', name: 'Shin', position: 'Beginning' },
+            { letter: 'ـشـ', name: 'Shin', position: 'Middle' },
+            { letter: 'ـش', name: 'Shin', position: 'End' },
+            
+            // Sad
+            { letter: 'ص', name: 'Sad', position: 'Isolated' },
+            { letter: 'صـ', name: 'Sad', position: 'Beginning' },
+            { letter: 'ـصـ', name: 'Sad', position: 'Middle' },
+            { letter: 'ـص', name: 'Sad', position: 'End' },
+            
+            // Dad
+            { letter: 'ض', name: 'Dad', position: 'Isolated' },
+            { letter: 'ضـ', name: 'Dad', position: 'Beginning' },
+            { letter: 'ـضـ', name: 'Dad', position: 'Middle' },
+            { letter: 'ـض', name: 'Dad', position: 'End' },
+            
+            // Ta (emphatic)
+            { letter: 'ط', name: 'Ta', position: 'Isolated' },
+            { letter: 'طـ', name: 'Ta', position: 'Beginning' },
+            { letter: 'ـطـ', name: 'Ta', position: 'Middle' },
+            { letter: 'ـط', name: 'Ta', position: 'End' },
+            
+            // Za (emphatic)
+            { letter: 'ظ', name: 'Za', position: 'Isolated' },
+            { letter: 'ظـ', name: 'Za', position: 'Beginning' },
+            { letter: 'ـظـ', name: 'Za', position: 'Middle' },
+            { letter: 'ـظ', name: 'Za', position: 'End' },
+            
+            // Ayn
+            { letter: 'ع', name: 'Ayn', position: 'Isolated' },
+            { letter: 'عـ', name: 'Ayn', position: 'Beginning' },
+            { letter: 'ـعـ', name: 'Ayn', position: 'Middle' },
+            { letter: 'ـع', name: 'Ayn', position: 'End' },
+            
+            // Ghayn
+            { letter: 'غ', name: 'Ghayn', position: 'Isolated' },
+            { letter: 'غـ', name: 'Ghayn', position: 'Beginning' },
+            { letter: 'ـغـ', name: 'Ghayn', position: 'Middle' },
+            { letter: 'ـغ', name: 'Ghayn', position: 'End' },
+            
+            // Fa
+            { letter: 'ف', name: 'Fa', position: 'Isolated' },
+            { letter: 'فـ', name: 'Fa', position: 'Beginning' },
+            { letter: 'ـفـ', name: 'Fa', position: 'Middle' },
+            { letter: 'ـف', name: 'Fa', position: 'End' },
+            
+            // Qaf
+            { letter: 'ق', name: 'Qaf', position: 'Isolated' },
+            { letter: 'قـ', name: 'Qaf', position: 'Beginning' },
+            { letter: 'ـقـ', name: 'Qaf', position: 'Middle' },
+            { letter: 'ـق', name: 'Qaf', position: 'End' },
+            
+            // Kaf
+            { letter: 'ك', name: 'Kaf', position: 'Isolated' },
+            { letter: 'كـ', name: 'Kaf', position: 'Beginning' },
+            { letter: 'ـكـ', name: 'Kaf', position: 'Middle' },
+            { letter: 'ـك', name: 'Kaf', position: 'End' },
+            
+            // Lam
+            { letter: 'ل', name: 'Lam', position: 'Isolated' },
+            { letter: 'لـ', name: 'Lam', position: 'Beginning' },
+            { letter: 'ـلـ', name: 'Lam', position: 'Middle' },
+            { letter: 'ـل', name: 'Lam', position: 'End' },
+            
+            // Mim
+            { letter: 'م', name: 'Mim', position: 'Isolated' },
+            { letter: 'مـ', name: 'Mim', position: 'Beginning' },
+            { letter: 'ـمـ', name: 'Mim', position: 'Middle' },
+            { letter: 'ـم', name: 'Mim', position: 'End' },
+            
+            // Nun
+            { letter: 'ن', name: 'Nun', position: 'Isolated' },
+            { letter: 'نـ', name: 'Nun', position: 'Beginning' },
+            { letter: 'ـنـ', name: 'Nun', position: 'Middle' },
+            { letter: 'ـن', name: 'Nun', position: 'End' },
+            
+            // Ha
+            { letter: 'ه', name: 'Ha', position: 'Isolated' },
+            { letter: 'هـ', name: 'Ha', position: 'Beginning' },
+            { letter: 'ـهـ', name: 'Ha', position: 'Middle' },
+            { letter: 'ـه', name: 'Ha', position: 'End' },
+            
+            // Waw
+            { letter: 'و', name: 'Waw', position: 'Isolated' },
+            { letter: 'و', name: 'Waw', position: 'Beginning' },
+            { letter: 'ـو', name: 'Waw', position: 'End' },
+            
+            // Ya
+            { letter: 'ي', name: 'Ya', position: 'Isolated' },
+            { letter: 'يـ', name: 'Ya', position: 'Beginning' },
+            { letter: 'ـيـ', name: 'Ya', position: 'Middle' },
+            { letter: 'ـي', name: 'Ya', position: 'End' },
+        ];
+
+        // App state
+        let currentCardIndex = 0;
+        let shuffledCards = [...arabicLetters];
+        let isFlipped = false;
+
+        // DOM elements
+        const card = document.getElementById('card');
+        const arabicLetter = document.getElementById('arabic-letter');
+        const letterName = document.getElementById('letter-name');
+        const letterPosition = document.getElementById('letter-position');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+
+        // Initialize app
+        function init() {
+            shuffleCards();
+            showCard();
+        }
+
+        // Shuffle cards randomly
+        function shuffleCards() {
+            for (let i = shuffledCards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledCards[i], shuffledCards[j]] = [shuffledCards[j], shuffledCards[i]];
+            }
+        }
+
+        // Show current card
+        function showCard() {
+            const currentCard = shuffledCards[currentCardIndex];
+            arabicLetter.textContent = currentCard.letter;
+            letterName.textContent = currentCard.name;
+            letterPosition.textContent = currentCard.position;
+            
+            // Reset flip state
+            card.classList.remove('flipped');
+            isFlipped = false;
+        }
+
+        // Flip card
+        function flipCard() {
+            card.classList.toggle('flipped');
+            isFlipped = !isFlipped;
+        }
+
+        // Navigate to next card
+        function nextCard() {
+            currentCardIndex = (currentCardIndex + 1) % shuffledCards.length;
+            showCard();
+        }
+
+        // Navigate to previous card
+        function prevCard() {
+            currentCardIndex = currentCardIndex === 0 ? shuffledCards.length - 1 : currentCardIndex - 1;
+            showCard();
+        }
+
+        // Event listeners
+        card.addEventListener('click', flipCard);
+        nextBtn.addEventListener('click', nextCard);
+        prevBtn.addEventListener('click', prevCard);
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'ArrowLeft':
+                    prevCard();
+                    break;
+                case 'ArrowRight':
+                    nextCard();
+                    break;
+                case ' ':
+                case 'Enter':
+                    e.preventDefault();
+                    flipCard();
+                    break;
+            }
+        });
+
+        // Touch/swipe support
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const minSwipeDistance = 50;
+
+        card.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        card.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeDistance = touchEndX - touchStartX;
+            
+            if (Math.abs(swipeDistance) > minSwipeDistance) {
+                if (swipeDistance > 0) {
+                    prevCard();
+                } else {
+                    nextCard();
+                }
+            }
+        }
+
+        // Prevent context menu on long touch
+        card.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>
